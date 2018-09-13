@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const middleware_1 = __importDefault(require("aws-serverless-express/middleware"));
+const body_parser_1 = __importDefault(require("body-parser"));
+require("reflect-metadata");
+const client_1 = __importDefault(require("./routes/client"));
+const handleAuth_1 = __importDefault(require("./auth/handleAuth"));
+const welcome_1 = __importDefault(require("./routes/welcome"));
+const handle404_1 = __importDefault(require("./errors/handle404"));
+const handleError_1 = __importDefault(require("./errors/handleError"));
+const app = express_1.default();
+app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.use(body_parser_1.default.json());
+app.use(middleware_1.default.eventContext());
+app.use('/', handleAuth_1.default);
+app.use('/welcome', welcome_1.default);
+app.use('/client', client_1.default);
+app.use(handle404_1.default);
+app.use(handleError_1.default);
+exports.default = app;
