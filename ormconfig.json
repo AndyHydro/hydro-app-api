@@ -1,0 +1,19 @@
+{
+   "type": "mysql",
+   "host": "localhost",
+   "port": 3306,
+   "username": "root",
+   "password": "root",
+   "database": "project_hydro",
+   "synchronize": false,
+   "logging": false,
+   "entities": [
+      "app/entity/**/*.ts"
+   ],
+   "migrations": [
+      "app/migration/**/*.ts"
+   ],
+   "subscribers": [
+      "app/subscriber/**/*.ts"
+   ]
+}
