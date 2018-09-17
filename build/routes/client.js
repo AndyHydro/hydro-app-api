@@ -1,38 +1,29 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const check_1 = require("express-validator/check");
-const db_1 = require("../db");
+const db_1 = require("../utils/db");
 const Signature_1 = require("../entity/Signature");
 const router = express_1.Router();
-const args = [
-    check_1.body('signature').isLength({ min: 132, max: 132 }),
-    check_1.body('username').isLength({ min: 4 }),
+const signatureArguments = [
+    check_1.body('signature').isLength({ min: 132, max: 132 }).withMessage('Please pass a signature of the correct length.'),
+    check_1.body('username').isByteLength({ min: 4, max: 30 }).withMessage('Please pass a username of the correct byte length.'),
     check_1.body('application_id').isUUID()
 ];
-router.post('/signature', args, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+router.post('/signature', signatureArguments, (req, res, next) => {
     const errors = check_1.validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-    }
+    if (!errors.isEmpty())
+        res.status(422).json(errors.array());
     db_1.withConnection((connection) => {
         const signatureRepository = connection.manager.getRepository(Signature_1.Signature);
         const newSignature = signatureRepository.create(req.body);
         return signatureRepository.save(newSignature)
-            .then(() => {
-            return res.json(newSignature);
+            .then((signatures) => {
+            res.json(signatures);
         });
     })
         .catch((error) => {
-        return next(error);
+        next(error);
     });
-}));
+});
 exports.default = router;
