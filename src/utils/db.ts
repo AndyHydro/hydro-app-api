@@ -1,6 +1,7 @@
 import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions } from 'typeorm'
 
 import { Signature } from '../entity/Signature'
+import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
 const databaseOptions: ConnectionOptions = {
   type:     "mysql",
@@ -10,7 +11,8 @@ const databaseOptions: ConnectionOptions = {
   password: process.env.db_password,
   database: process.env.db_database,
   entities: [
-    Signature
+    Signature,
+    ApplicationClientMapping
   ]
 }
 

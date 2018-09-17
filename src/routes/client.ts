@@ -4,6 +4,7 @@ import { Connection } from 'typeorm'
 
 import { withConnection } from '../utils/db'
 import { Signature } from '../entity/Signature'
+import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
 const router: Router = Router()
 
@@ -19,6 +20,13 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
   if (!errors.isEmpty()) res.status(422).json(errors.array())
 
     withConnection(async (connection: Connection) => {
+      const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
+
+      let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
+      if (!mapping){
+        return res.status(400)
+      }
+
       const signatureRepository = connection.manager.getRepository(Signature)
 
       let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
