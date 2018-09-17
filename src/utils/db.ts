@@ -1,6 +1,6 @@
 import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions } from 'typeorm'
 
-import { Signature } from './entity/Signature'
+import { Signature } from '../entity/Signature'
 
 const databaseOptions: ConnectionOptions = {
   type:     "mysql",
@@ -27,5 +27,5 @@ const connecting = connection.connect()
 export const withConnection: Function = async (connectionFunction: Function): Promise<any> => {
   await connecting
   if (connecting === null) throw connectionError
-  await connectionFunction(connection)
+  return connectionFunction(connection)
 }
