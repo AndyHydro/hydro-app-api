@@ -19,18 +19,23 @@ router.post('/signature', args, async (req: Request, res: Response, next: Functi
       return res.status(422).json({ errors: errors.array() })
     }
 
-    withConnection((connection: Connection) => {
+    withConnection(async (connection: Connection) => {
       const signatureRepository = connection.manager.getRepository(Signature)
-      const newSignature = signatureRepository.create(req.body)
 
-      return signatureRepository.save(newSignature)
-        .then(() => {
-          return res.json(newSignature)
-        })
-    })
-      .catch((error: any) => {
+      let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
+
+      if (existingSignature) {
+        existingSignature.signature = req.body.signature
+        await signatureRepository.save(existingSignature)
+        return res.json(existingSignature)
+      } else {
+        const newSignature = signatureRepository.create(req.body)
+        await signatureRepository.save(newSignature)
+        return res.json(newSignature)
+      }
+    }).catch((error: any) => {
         return next(error)
-      })
+    })
 })
 
 export default router

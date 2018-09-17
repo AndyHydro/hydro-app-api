@@ -5,7 +5,7 @@ import 'reflect-metadata'
 
 import ClientController from './routes/client'
 import handleAuth from './auth/handleAuth'
-import welcome from './routes/welcome'
+import health from './routes/health'
 import handle404 from './errors/handle404'
 import handleError from './errors/handleError'
 
@@ -20,7 +20,7 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 app.use('/', handleAuth)
 
 // define routes
-app.use('/welcome', welcome)
+app.use('/health', health)
 app.use('/client', ClientController)
 
 // catch 404s and forward to error handler
