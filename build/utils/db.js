@@ -9,15 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const utils_1 = require("../utils");
 const Signature_1 = require("../entity/Signature");
-exports.withConnection = (connectionFunction) => __awaiter(this, void 0, void 0, function* () {
+exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, void 0, function* () {
+    const dbConfigVars = [
+        'hydro.apiDataSource.driverType',
+        'hydro.db.host',
+        'hydro.db.port',
+        'hydro.apiDataSource.username',
+        'hydro.apiDataSource.password',
+        'db.name.hydro_api'
+    ];
+    const configVars = yield utils_1.getConfig(req, dbConfigVars)
+        .catch((error) => error);
+    if (configVars instanceof Error)
+        throw configVars;
+    const [driver, host, port, user, pass, database] = configVars;
     const databaseOptions = {
-        type: "mysql",
-        host: process.env.db_host,
-        port: Number(process.env.db_port),
-        username: process.env.db_username,
-        password: process.env.db_password,
-        database: process.env.db_database,
+        type: driver,
+        host: host,
+        port: Number(port),
+        username: user,
+        password: pass,
+        database: database,
         entities: [
             Signature_1.Signature
         ]

@@ -10,24 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const cloud_config_client_1 = require("cloud-config-client");
 const java_properties_1 = require("java-properties");
-const strEnum = (o) => {
-    return o.reduce((res, key) => {
-        res[key] = key;
-        return res;
-    }, Object.create(null));
-};
-const Variables = strEnum(['info.app.version', "hydro.apiDataSource.driverType"]);
-let validationError;
-const validateProperties = (properties) => {
-    const propertiesKeys = properties.getKeys();
-    const missingKeys = Object.keys(Variables)
-        .filter((key) => !propertiesKeys.includes(key));
-    if (missingKeys.length !== 0) {
-        validationError = Error(`Required key(s) missing from config: '${missingKeys.join("', '")}'`);
-    }
-};
+const _1 = require("./");
 const config = new java_properties_1.PropertiesFile('application.properties');
-validateProperties(config);
 let cloudConfigStatus;
 const fetchCloudConfig = (environment) => __awaiter(this, void 0, void 0, function* () {
     if (cloudConfigStatus !== environment) {
@@ -49,10 +33,8 @@ const fetchCloudConfig = (environment) => __awaiter(this, void 0, void 0, functi
         });
     }
 });
-exports.getConfig = (environment, variables) => __awaiter(this, void 0, void 0, function* () {
-    if (validationError !== undefined) {
-        throw validationError;
-    }
+exports.getConfig = (req, variables) => __awaiter(this, void 0, void 0, function* () {
+    const environment = _1.getEnvironment(req);
     if (environment !== 'test') {
         yield fetchCloudConfig(environment);
         if (cloudConfigStatus === undefined) {
