@@ -2,6 +2,7 @@ import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions 
 
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
+import { VerificationLog } from '../entity/VerificationLog'
 
 const databaseOptions: ConnectionOptions = {
   type:     "mysql",
@@ -12,7 +13,8 @@ const databaseOptions: ConnectionOptions = {
   database: process.env.db_database,
   entities: [
     Signature,
-    ApplicationClientMapping
+    ApplicationClientMapping,
+    VerificationLog
   ]
 }
 

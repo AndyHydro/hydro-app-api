@@ -6,6 +6,9 @@ import { withConnection } from '../utils/db'
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
+import { customError } from '../errors/handleCustomError'
+import * as Errors from '../constants/errors'
+
 const router: Router = Router()
 
 // handle /signature calls
@@ -17,17 +20,16 @@ const signatureArguments = [
 
 router.post('/signature', signatureArguments, (req: Request, res: Response, next: Function) => {
   const errors = validationResult(req)
-  if (!errors.isEmpty()) res.status(422).json(errors.array())
+  if (!errors.isEmpty()) return customError(errors.array(), 400, res)
 
     withConnection(async (connection: Connection) => {
       const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
+      const signatureRepository = connection.manager.getRepository(Signature)
 
       let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
       if (!mapping){
-        return res.sendStatus(400)
+        return customError(Errors.applicationClientMappingDoesntExist, 400, res)
       }
-
-      const signatureRepository = connection.manager.getRepository(Signature)
 
       let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
 

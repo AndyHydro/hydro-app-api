@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import 'reflect-metadata'
 
 import ClientController from './routes/client'
+import VerifySignature from './routes/verifySignature'
 import handleAuth from './auth/handleAuth'
 import health from './routes/health'
 import handle404 from './errors/handle404'
@@ -22,6 +23,7 @@ app.use('/', handleAuth)
 // define routes
 app.use('/health', health)
 app.use('/client', ClientController)
+app.use('/verify_signature', VerifySignature)
 
 // catch 404s and forward to error handler
 app.use(handle404)
