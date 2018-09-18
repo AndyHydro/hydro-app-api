@@ -1,6 +1,7 @@
 import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions } from 'typeorm'
 
 import { Signature } from '../entity/Signature'
+import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
 export const withConnection: Function = async (connectionFunction: Function): Promise<any> => {
   const databaseOptions: ConnectionOptions = {

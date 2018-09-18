@@ -12,6 +12,7 @@ const express_1 = require("express");
 const check_1 = require("express-validator/check");
 const db_1 = require("../utils/db");
 const Signature_1 = require("../entity/Signature");
+const ApplicationClientMapping_1 = require("../entity/ApplicationClientMapping");
 const router = express_1.Router();
 const signatureArguments = [
     check_1.body('signature').isLength({ min: 132, max: 132 }).withMessage('Please pass a signature of the correct length.'),
@@ -23,6 +24,11 @@ router.post('/signature', signatureArguments, (req, res, next) => {
     if (!errors.isEmpty())
         res.status(422).json(errors.array());
     db_1.withConnection((connection) => __awaiter(this, void 0, void 0, function* () {
+        const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping_1.ApplicationClientMapping);
+        let mapping = yield applicationClientMappingRepository.findOne({ hydro_id: req.body.username, application_id: req.body.application_id });
+        if (!mapping) {
+            return res.sendStatus(400);
+        }
         const signatureRepository = connection.manager.getRepository(Signature_1.Signature);
         let existingSignature = yield signatureRepository.findOne({ username: req.body.username, application_id: req.body.application_id });
         if (existingSignature) {
