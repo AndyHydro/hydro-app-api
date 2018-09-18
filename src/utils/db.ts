@@ -1,7 +1,7 @@
 import { Request } from 'express'
-import { createConnection, Connection, ConnectionOptions } from 'typeorm'
+import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions } from 'typeorm'
 
-import { getConfig } from '../utils'
+import { getConfig, getEnvironment } from '../utils'
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 import { VerificationLog } from '../entity/VerificationLog'
@@ -21,7 +21,10 @@ export const withConnection: Function = async (req: Request, connectionFunction:
   if (configVars instanceof Error) throw configVars
   const [ driver, host, port, user, pass, database ] = configVars
 
+  const environment = getEnvironment(req)
+
   const databaseOptions: ConnectionOptions = {
+    name:     environment,
     type:     driver,
     host:     host,
     port:     Number(port),
@@ -35,17 +38,14 @@ export const withConnection: Function = async (req: Request, connectionFunction:
     ]
   }
 
-  const connection: Connection = await createConnection(databaseOptions)
+  const manager: ConnectionManager = getConnectionManager()
+  let connection: Connection
+  if (manager.has(environment)) {
+    connection = manager.get(environment)
+  } else {
+    connection = manager.create(databaseOptions)
+    await connection.connect()
+  }
 
-  // let connectionError: object | undefined
-  // const connecting = connection.connect()
-  //   .then(error => {
-  //     connectionError = error
-  //     return null
-  //   })
-  //
-  // await connecting
-  // if (connecting === null) throw connectionError
-  
   return connectionFunction(connection)
 }

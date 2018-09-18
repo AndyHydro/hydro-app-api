@@ -27,7 +27,9 @@ exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, vo
     if (configVars instanceof Error)
         throw configVars;
     const [driver, host, port, user, pass, database] = configVars;
+    const environment = utils_1.getEnvironment(req);
     const databaseOptions = {
+        name: environment,
         type: driver,
         host: host,
         port: Number(port),
@@ -40,6 +42,14 @@ exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, vo
             VerificationLog_1.VerificationLog
         ]
     };
-    const connection = yield typeorm_1.createConnection(databaseOptions);
+    const manager = typeorm_1.getConnectionManager();
+    let connection;
+    if (manager.has(environment)) {
+        connection = manager.get(environment);
+    }
+    else {
+        connection = manager.create(databaseOptions);
+        yield connection.connect();
+    }
     return connectionFunction(connection);
 });
