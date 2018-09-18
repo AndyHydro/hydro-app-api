@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator/check'
 import { Connection } from 'typeorm'
 
-import { withConnection } from '../utils/db'
+import { withConnection } from '../utils'
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
@@ -22,29 +22,29 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
   const errors = validationResult(req)
   if (!errors.isEmpty()) return customError(errors.array(), 400, res)
 
-    withConnection(req, async (connection: Connection) => {
-      const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
-      const signatureRepository = connection.manager.getRepository(Signature)
+  withConnection(req, async (connection: Connection) => {
+    const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
+    const signatureRepository = connection.manager.getRepository(Signature)
 
-      let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
-      if (!mapping){
-        return customError(Errors.applicationClientMappingDoesntExist, 400, res)
-      }
+    let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
+    if (!mapping){
+      return customError(Errors.applicationClientMappingDoesntExist, 400, res)
+    }
 
-      let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
+    let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
 
-      if (existingSignature) {
-        existingSignature.signature = req.body.signature
-        await signatureRepository.save(existingSignature)
-        return res.json(existingSignature)
-      } else {
-        const newSignature = signatureRepository.create(req.body)
-        await signatureRepository.save(newSignature)
-        return res.json(newSignature)
-      }
-    }).catch((error: any) => {
-        return next(error)
-    })
+    if (existingSignature) {
+      existingSignature.signature = req.body.signature
+      await signatureRepository.save(existingSignature)
+      return res.json(existingSignature)
+    } else {
+      const newSignature = signatureRepository.create(req.body)
+      await signatureRepository.save(newSignature)
+      return res.json(newSignature)
+    }
+  }).catch((error: any) => {
+      return next(error)
+  })
 })
 
 export default router

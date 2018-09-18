@@ -17,7 +17,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const check_1 = require("express-validator/check");
-const db_1 = require("../utils/db");
+const utils_1 = require("../utils");
 const Signature_1 = require("../entity/Signature");
 const ApplicationClientMapping_1 = require("../entity/ApplicationClientMapping");
 const handleCustomError_1 = require("../errors/handleCustomError");
@@ -32,7 +32,7 @@ router.post('/signature', signatureArguments, (req, res, next) => {
     const errors = check_1.validationResult(req);
     if (!errors.isEmpty())
         return handleCustomError_1.customError(errors.array(), 400, res);
-    db_1.withConnection(req, (connection) => __awaiter(this, void 0, void 0, function* () {
+    utils_1.withConnection(req, (connection) => __awaiter(this, void 0, void 0, function* () {
         const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping_1.ApplicationClientMapping);
         const signatureRepository = connection.manager.getRepository(Signature_1.Signature);
         let mapping = yield applicationClientMappingRepository.findOne({ hydro_id: req.body.username, application_id: req.body.application_id });

@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { getConnectionManager, ConnectionManager, Connection, ConnectionOptions } from 'typeorm'
+import { createConnection, Connection, ConnectionOptions } from 'typeorm'
 
 import { getConfig } from '../utils'
 import { Signature } from '../entity/Signature'
@@ -35,17 +35,17 @@ export const withConnection: Function = async (req: Request, connectionFunction:
     ]
   }
 
-  const connectionManager: ConnectionManager = getConnectionManager()
-  const connection: Connection = connectionManager.create(databaseOptions)
+  const connection: Connection = await createConnection(databaseOptions)
 
-  let connectionError: object | undefined
-  const connecting = connection.connect()
-    .then(error => {
-      connectionError = error
-      return null
-    })
-
-  await connecting
-  if (connecting === null) throw connectionError
+  // let connectionError: object | undefined
+  // const connecting = connection.connect()
+  //   .then(error => {
+  //     connectionError = error
+  //     return null
+  //   })
+  //
+  // await connecting
+  // if (connecting === null) throw connectionError
+  
   return connectionFunction(connection)
 }

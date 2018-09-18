@@ -40,16 +40,6 @@ exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, vo
             VerificationLog_1.VerificationLog
         ]
     };
-    const connectionManager = typeorm_1.getConnectionManager();
-    const connection = connectionManager.create(databaseOptions);
-    let connectionError;
-    const connecting = connection.connect()
-        .then(error => {
-        connectionError = error;
-        return null;
-    });
-    yield connecting;
-    if (connecting === null)
-        throw connectionError;
+    const connection = yield typeorm_1.createConnection(databaseOptions);
     return connectionFunction(connection);
 });
