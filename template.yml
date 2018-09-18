@@ -1,0 +1,15 @@
+# for use with aws-sam-cli
+
+Resources:
+  HydroAPI:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: build/lambda.handler
+      Runtime: nodejs8.10
+      Timeout: 10
+      Events:
+        MyGateway:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any

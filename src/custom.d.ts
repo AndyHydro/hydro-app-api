@@ -4,3 +4,6 @@ declare namespace Express {
     apiGateway: any // from aws-serverless-express/middleware in src/app.ts
   }
 }
+
+declare module 'cloud-config-client'
+declare module 'java-properties'
