@@ -13,7 +13,7 @@ const utils_1 = require("../utils");
 const router = express_1.Router();
 router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
     const environment = utils_1.getEnvironment(req);
-    const version = yield utils_1.getConfig(environment, 'info.app.version')
+    const version = yield utils_1.getConfig(req, 'info.app.version')
         .catch((error) => error);
     if (version instanceof Error)
         return res.sendStatus(500);

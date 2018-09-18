@@ -1,32 +1,13 @@
+import { Request } from 'express'
 import { load } from 'cloud-config-client'
 import { PropertiesFile } from 'java-properties'
 
+import { getEnvironment } from './'
+
 type Environment = 'test' | 'dev' | 'qa' | 'sandbox' | 'prod'
-
-// from https://basarat.gitbooks.io/typescript/docs/types/literal-types.html
-const strEnum = <T extends string>(o: Array<T>): {[K in T]: K} => {
-  return o.reduce((res, key) => {
-    res[key] = key
-    return res
-  }, Object.create(null))
-}
-const Variables = strEnum(['info.app.version', "hydro.apiDataSource.driverType"])
-type Variables = keyof typeof Variables
-
-let validationError: Error | undefined
-const validateProperties = (properties: any) => {
-  const propertiesKeys = properties.getKeys()
-  const missingKeys: string[] = Object.keys(Variables)
-    .filter((key: string) => !propertiesKeys.includes(key))
-
-  if (missingKeys.length !== 0) {
-    validationError = Error(`Required key(s) missing from config: '${missingKeys.join("', '")}'`)
-  }
-}
 
 // fetch local config
 const config = new PropertiesFile('application.properties')
-validateProperties(config)
 
 // fetch cloud config
 let cloudConfigStatus: Environment | undefined
@@ -53,10 +34,8 @@ const fetchCloudConfig = async (environment: Environment) => {
 }
 
 // get config
-export const getConfig = async (environment: Environment, variables: Variables | Variables[]): Promise<any> => {
-  if (validationError !== undefined) {
-    throw validationError
-  }
+export const getConfig = async (req: Request, variables: string[] | string): Promise<any> => {
+  const environment: Environment = getEnvironment(req)
 
   if (environment !== 'test') {
     await fetchCloudConfig(environment)

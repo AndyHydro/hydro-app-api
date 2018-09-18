@@ -7,7 +7,7 @@ const router: Router = Router()
 router.get('/', async (req: Request, res: Response) => {
   const environment = getEnvironment(req)
 
-  const version = await getConfig(environment, 'info.app.version')
+  const version = await getConfig(req, 'info.app.version')
     .catch((error: Error) => error)
   if (version instanceof Error) return res.sendStatus(500)
 
