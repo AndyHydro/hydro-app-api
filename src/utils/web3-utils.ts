@@ -1,7 +1,6 @@
 import Web3 from 'web3'
-import { provider } from '../constants/web3-constants'
 
-export function parseSignature(signature: String) {
+export function parseSignature(provider: string, signature: string) {
   const web3 = new Web3(provider)
 
   let noHex = signature.substr(2);

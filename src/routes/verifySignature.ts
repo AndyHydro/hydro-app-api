@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express'
 import { body, validationResult } from 'express-validator/check'
 import { Connection } from 'typeorm'
 import Web3 from 'web3'
-import { provider, clientRaindropABI, clientRaindropAddress } from '../constants/web3-constants'
+import { getEnvironment, getConfig } from '../utils'
 import { parseSignature } from '../utils/web3-utils'
 
 import { withConnection } from '../utils/db'
@@ -25,10 +25,14 @@ router.post('/', verifyArguments, (req: Request, res: Response, next: Function) 
   const errors = validationResult(req)
   if (!errors.isEmpty()) return customError(errors.array(), 400, res)
 
-  withConnection(async (connection: Connection) => {
+  withConnection(async (req: Request, connection: Connection) => {
     const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
     const signatureRepository = connection.manager.getRepository(Signature)
     const verificationLogRespository = connection.manager.getRepository(VerificationLog)
+
+    const environment = getEnvironment(req)
+    const [provider, clientRaindropAddress, clientRaindropABI] = await getConfig(environment, ['url.networkURL.infura', 'clientRaindrop.address', 'clientRaindrop.ABI'])
+      .catch((error: Error) => error)
 
     let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
     if (!mapping){
@@ -48,7 +52,7 @@ router.post('/', verifyArguments, (req: Request, res: Response, next: Function) 
       return customError(Errors.hydroIdDoesntExist, 400, res)
     }
 
-    let {r: r, s: s, v: v} = parseSignature(existingSignature.signature)
+    let {r: r, s: s, v: v} = parseSignature(provider, existingSignature.signature)
     let isSigned = await clientRaindrop.methods.isSigned(userAddress, web3.utils.keccak256(req.body.message), v, r, s).call();
 
     let verification = verificationLogRespository.create({signature: existingSignature.signature, username: req.body.hydro_id, verified: isSigned, application_id: req.body.application_id})

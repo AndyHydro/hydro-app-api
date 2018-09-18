@@ -11,6 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const utils_1 = require("../utils");
 const Signature_1 = require("../entity/Signature");
+const ApplicationClientMapping_1 = require("../entity/ApplicationClientMapping");
+const VerificationLog_1 = require("../entity/VerificationLog");
 exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, void 0, function* () {
     const dbConfigVars = [
         'hydro.apiDataSource.driverType',
@@ -33,7 +35,9 @@ exports.withConnection = (req, connectionFunction) => __awaiter(this, void 0, vo
         password: pass,
         database: database,
         entities: [
-            Signature_1.Signature
+            Signature_1.Signature,
+            ApplicationClientMapping_1.ApplicationClientMapping,
+            VerificationLog_1.VerificationLog
         ]
     };
     const connectionManager = typeorm_1.getConnectionManager();

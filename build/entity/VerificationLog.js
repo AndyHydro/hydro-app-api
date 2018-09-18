@@ -10,37 +10,37 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let ApplicationClientMapping = class ApplicationClientMapping {
+let VerificationLog = class VerificationLog {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn("uuid"),
     __metadata("design:type", String)
-], ApplicationClientMapping.prototype, "application_client_mapping_id", void 0);
+], VerificationLog.prototype, "log_id", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], ApplicationClientMapping.prototype, "application_id", void 0);
+], VerificationLog.prototype, "signature", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], ApplicationClientMapping.prototype, "hydro_id", void 0);
+], VerificationLog.prototype, "username", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], ApplicationClientMapping.prototype, "application_name", void 0);
+], VerificationLog.prototype, "application_id", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Boolean)
-], ApplicationClientMapping.prototype, "confirmed", void 0);
+], VerificationLog.prototype, "verified", void 0);
 __decorate([
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)
-], ApplicationClientMapping.prototype, "create_date", void 0);
+], VerificationLog.prototype, "create_date", void 0);
 __decorate([
     typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Date)
-], ApplicationClientMapping.prototype, "update_date", void 0);
-ApplicationClientMapping = __decorate([
-    typeorm_1.Entity("application_client_mapping")
-], ApplicationClientMapping);
-exports.ApplicationClientMapping = ApplicationClientMapping;
+], VerificationLog.prototype, "update_date", void 0);
+VerificationLog = __decorate([
+    typeorm_1.Entity("verification_log")
+], VerificationLog);
+exports.VerificationLog = VerificationLog;
