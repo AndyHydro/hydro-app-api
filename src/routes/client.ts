@@ -22,7 +22,7 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
   const errors = validationResult(req)
   if (!errors.isEmpty()) return customError(errors.array(), 400, res)
 
-    withConnection(async (connection: Connection) => {
+    withConnection(req, async (connection: Connection) => {
       const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
       const signatureRepository = connection.manager.getRepository(Signature)
 
