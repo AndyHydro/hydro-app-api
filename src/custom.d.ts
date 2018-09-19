@@ -7,4 +7,4 @@ declare namespace Express {
 
 declare module 'cloud-config-client'
 declare module 'java-properties'
-declare module 'web3'
+declare module 'ethjs'

@@ -6,3 +6,5 @@ var config_1 = require("./config");
 exports.getConfig = config_1.getConfig;
 var utils_1 = require("./utils");
 exports.getEnvironment = utils_1.getEnvironment;
+var web3Utils_1 = require("./web3Utils");
+exports.parseSignature = web3Utils_1.parseSignature;

@@ -33,7 +33,6 @@ router.post('/signature', signatureArguments, (req, res, next) => {
     if (!errors.isEmpty())
         return handleCustomError_1.customError(errors.array(), 400, res);
     utils_1.withConnection(req, (connection) => __awaiter(this, void 0, void 0, function* () {
-        console.log(connection);
         const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping_1.ApplicationClientMapping);
         const signatureRepository = connection.manager.getRepository(Signature_1.Signature);
         let mapping = yield applicationClientMappingRepository.findOne({ hydro_id: req.body.username, application_id: req.body.application_id });
