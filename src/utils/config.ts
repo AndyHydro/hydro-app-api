@@ -7,19 +7,24 @@ import { getEnvironment } from './'
 type Environment = 'test' | 'dev' | 'qa' | 'sandbox' | 'prod'
 
 // fetch local config
-const config = new PropertiesFile('application.properties')
+const localConfig = new PropertiesFile('application.properties')
+let config = localConfig
 
 // fetch cloud config
 let cloudConfigStatus: Environment | undefined
-const fetchCloudConfig = async (environment: Environment) => {
+async function fetchCloudConfig (environment: Environment) {
   if (cloudConfigStatus !== environment) {
     await load({
       endpoint: config.get('config.server.endpoint'),
       name:     config.get('config.server.name'),
       profiles: `eks${environment}`,
-      auth:     {user: config.get('config.server.user'), pass: config.get('config.server.pass') }
+      auth:     {
+        user: config.get('config.server.user'),
+        pass: config.get('config.server.pass')
+      }
     })
       .then((cloudConfig: any) => {
+        // config = localConfig
         cloudConfig.forEach((key: string, value: string) => {
           config.set(key, value)
         })
@@ -34,8 +39,9 @@ const fetchCloudConfig = async (environment: Environment) => {
 }
 
 // get config
-export const getConfig = async (req: Request, variables: string[] | string): Promise<any> => {
+export async function getConfig (req: Request, variables: string[] | string): Promise<string[] | string> {
   const environment: Environment = getEnvironment(req)
+  console.log(environment)
 
   if (environment !== 'test') {
     await fetchCloudConfig(environment)

@@ -6,7 +6,7 @@ import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 import { VerificationLog } from '../entity/VerificationLog'
 
-export const withConnection: Function = async (req: Request, connectionFunction: Function): Promise<any> => {
+export async function withConnection(req: Request, connectionFunction: Function): Promise<any> {
   const dbConfigVars: string[] = [
     'hydro.apiDataSource.driverType',
     'hydro.db.host',
@@ -23,26 +23,25 @@ export const withConnection: Function = async (req: Request, connectionFunction:
 
   const environment = getEnvironment(req)
 
-  const databaseOptions: ConnectionOptions = {
-    name:     environment,
-    type:     driver,
-    host:     host,
-    port:     Number(port),
-    username: user,
-    password: pass,
-    database: database,
-    entities: [
-      Signature,
-      ApplicationClientMapping,
-      VerificationLog
-    ]
-  }
-
   const manager: ConnectionManager = getConnectionManager()
   let connection: Connection
   if (manager.has(environment)) {
     connection = manager.get(environment)
   } else {
+    const databaseOptions: ConnectionOptions = {
+      name:     environment,
+      type:     driver,
+      host:     host,
+      port:     Number(port),
+      username: user,
+      password: pass,
+      database: database,
+      entities: [
+        Signature,
+        ApplicationClientMapping,
+        VerificationLog
+      ]
+    }
     connection = manager.create(databaseOptions)
     await connection.connect()
   }

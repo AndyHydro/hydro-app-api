@@ -1,5 +1,5 @@
 import { Request } from 'express'
 
-export const getEnvironment = (req: Request) => {
+export function getEnvironment (req: Request) {
   return req.apiGateway.context.invokedFunctionArn.replace(/.*:/g, '')
 }

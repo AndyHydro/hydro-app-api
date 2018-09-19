@@ -12,6 +12,7 @@ const express_1 = require("express");
 const utils_1 = require("../utils");
 const router = express_1.Router();
 router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    console.log(require('web3'));
     const environment = utils_1.getEnvironment(req);
     const version = yield utils_1.getConfig(req, 'info.app.version')
         .catch((error) => error);

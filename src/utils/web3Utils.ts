@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+const Web3 = require('web3')
 
 export function parseSignature(provider: string, signature: string) {
   const web3 = new Web3(provider)

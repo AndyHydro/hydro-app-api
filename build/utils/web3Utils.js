@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const web3_1 = __importDefault(require("web3"));
+const Web3 = require('web3');
 function parseSignature(provider, signature) {
-    const web3 = new web3_1.default(provider);
+    const web3 = new Web3(provider);
     let noHex = signature.substr(2);
     return {
         r: '0x' + noHex.slice(0, 64),
