@@ -51,8 +51,6 @@ router.get('/', verifyArguments, (req: Request, res: Response, next: Function) =
     let {r: r, s: s, v: v} = parseSignature(existingSignature.signature)
     let {0: isSigned} = await clientRaindrop.isSigned(userAddress, Eth.keccak256(req.query.message), v, r, s);
 
-    console.log(isSigned)
-
     let verification = verificationLogRespository.create({signature: existingSignature.signature, username: req.query.hydro_id, verified: isSigned, application_id: req.query.application_id})
     await verificationLogRespository.save(verification)
 
