@@ -30,11 +30,11 @@ const handleCustomError_1 = require("../errors/handleCustomError");
 const Errors = __importStar(require("../constants/errors"));
 const router = express_1.Router();
 const verifyArguments = [
-    check_1.body('message').isLength({ min: 6, max: 6 }).withMessage('Please pass a message of the correct length.'),
-    check_1.body('hydro_id').isByteLength({ min: 4, max: 30 }).withMessage('Please pass a username of the correct byte length.'),
-    check_1.body('application_id').isUUID()
+    check_1.query('message').isLength({ min: 6, max: 6 }).withMessage('Please pass a message of the correct length.'),
+    check_1.query('hydro_id').isByteLength({ min: 4, max: 30 }).withMessage('Please pass a username of the correct byte length.'),
+    check_1.query('application_id').isUUID()
 ];
-router.post('/', verifyArguments, (req, res, next) => {
+router.get('/', verifyArguments, (req, res, next) => {
     const errors = check_1.validationResult(req);
     if (!errors.isEmpty())
         return handleCustomError_1.customError(errors.array(), 400, res);
@@ -43,24 +43,24 @@ router.post('/', verifyArguments, (req, res, next) => {
         const signatureRepository = connection.manager.getRepository(Signature_1.Signature);
         const verificationLogRespository = connection.manager.getRepository(VerificationLog_1.VerificationLog);
         const [provider, clientRaindropAddress, clientRaindropABI] = yield utils_2.getConfig(req, ['url.networkURL.infura', 'clientRaindrop.address', 'clientRaindrop.ABI']);
-        let mapping = yield applicationClientMappingRepository.findOne({ hydro_id: req.body.username, application_id: req.body.application_id });
+        let mapping = yield applicationClientMappingRepository.findOne({ hydro_id: req.query.hydro_id, application_id: req.query.application_id });
         if (!mapping) {
             return handleCustomError_1.customError(Errors.applicationClientMappingDoesntExist, 400, res);
         }
-        let existingSignature = yield signatureRepository.findOne({ username: req.body.hydro_id, application_id: req.body.application_id });
+        let existingSignature = yield signatureRepository.findOne({ username: req.query.hydro_id, application_id: req.query.application_id });
         if (!existingSignature) {
             return handleCustomError_1.customError(Errors.signatureDoesntExist, 400, res);
         }
         const eth = new ethjs_1.default(new ethjs_1.default.HttpProvider(provider));
         const clientRaindrop = eth.contract(JSON.parse(clientRaindropABI)).at(clientRaindropAddress);
-        let { userAddress } = yield clientRaindrop.getUserByName(req.body.hydro_id);
+        let { userAddress } = yield clientRaindrop.getUserByName(req.query.hydro_id);
         if (!userAddress) {
             return handleCustomError_1.customError(Errors.hydroIdDoesntExist, 400, res);
         }
         let { r: r, s: s, v: v } = utils_1.parseSignature(existingSignature.signature);
-        let { 0: isSigned } = yield clientRaindrop.isSigned(userAddress, ethjs_1.default.keccak256(req.body.message), v, r, s);
+        let { 0: isSigned } = yield clientRaindrop.isSigned(userAddress, ethjs_1.default.keccak256(req.query.message), v, r, s);
         console.log(isSigned);
-        let verification = verificationLogRespository.create({ signature: existingSignature.signature, username: req.body.hydro_id, verified: isSigned, application_id: req.body.application_id });
+        let verification = verificationLogRespository.create({ signature: existingSignature.signature, username: req.query.hydro_id, verified: isSigned, application_id: req.query.application_id });
         yield verificationLogRespository.save(verification);
         res.status(200).json(verification);
     })).catch((error) => {

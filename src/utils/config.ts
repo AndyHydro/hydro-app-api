@@ -43,7 +43,7 @@ export async function getConfig (req: Request, variables: string[] | string): Pr
   const environment: Environment = getEnvironment(req)
   console.log(environment)
 
-  if (environment !== 'test') {
+  if (environment !== 'test' && environment !== 'dev') {
     await fetchCloudConfig(environment)
     if (cloudConfigStatus === undefined) {
       throw Error('Could not fetch cloud config.')

@@ -43,7 +43,7 @@ function getConfig(req, variables) {
     return __awaiter(this, void 0, void 0, function* () {
         const environment = _1.getEnvironment(req);
         console.log(environment);
-        if (environment !== 'test') {
+        if (environment !== 'test' && environment !== 'dev') {
             yield fetchCloudConfig(environment);
             if (cloudConfigStatus === undefined) {
                 throw Error('Could not fetch cloud config.');
