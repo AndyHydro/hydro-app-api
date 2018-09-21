@@ -1,11 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 import { BaseEntity } from './BaseEntity'
 
 @Entity()
 export class Signature extends BaseEntity {
-    @PrimaryGeneratedColumn("uuid")
-    signature_id!: string;
+
+    @PrimaryColumn({type: "binary", length: 16})
+    signature_id!: Buffer;
 
     @Column()
     signature!: string;

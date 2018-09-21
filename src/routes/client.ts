@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator/check'
 import { Connection } from 'typeorm'
 
 import { withConnection } from '../utils'
+import { newUuidBuffer } from '../utils/uuidUtils'
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
@@ -36,7 +37,7 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
       await signatureRepository.save(existingSignature)
       return res.json(existingSignature)
     } else {
-      const newSignature = signatureRepository.create(req.body)
+      const newSignature = signatureRepository.create({...req.body, signature_id: newUuidBuffer()})
       await signatureRepository.save(newSignature)
       return res.json(newSignature)
     }
