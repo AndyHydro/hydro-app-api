@@ -1,10 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
-import { BaseEntity } from './BaseEntity'
+import { BaseEntity, UUIDTransformer } from './BaseEntity'
 
 @Entity("verification_log")
 export class VerificationLog extends BaseEntity {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryColumn({type: "binary", length: 16, transformer: new UUIDTransformer()})
     log_id!: string;
 
     @Column()
@@ -13,7 +13,7 @@ export class VerificationLog extends BaseEntity {
     @Column()
     username!: string;
 
-    @Column()
+    @Column({type: "binary", length: 16, transformer: new UUIDTransformer()})
     application_id!: string;
 
     @Column()

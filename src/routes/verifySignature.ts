@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express'
 import { query, validationResult } from 'express-validator/check'
 import { Connection } from 'typeorm'
 import Eth from 'ethjs'
-import { parseSignature } from '../utils'
+import { parseSignature, newUUID } from '../utils'
 
 import { withConnection, getConfig } from '../utils'
 import { Signature } from '../entity/Signature'
@@ -30,10 +30,8 @@ router.get('/', verifyArguments, (req: Request, res: Response, next: Function) =
     const verificationLogRespository = connection.manager.getRepository(VerificationLog)
     const [provider, clientRaindropAddress, clientRaindropABI] = await getConfig(req, ['url.networkURL.infura', 'clientRaindrop.address', 'clientRaindrop.ABI'])
 
-    let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.query.hydro_id, application_id: req.query.application_id})
-    if (!mapping){
-      return customError(Errors.applicationClientMappingDoesntExist, 400, res)
-    }
+    let mapping = await applicationClientMappingRepository.findOne({username: req.query.hydro_id, application_id: req.query.application_id})
+    if (!mapping) return customError(Errors.applicationClientMappingDoesntExist, 400, res)
 
     let existingSignature = await signatureRepository.findOne({username: req.query.hydro_id, application_id: req.query.application_id})
     if (!existingSignature) {
@@ -51,7 +49,11 @@ router.get('/', verifyArguments, (req: Request, res: Response, next: Function) =
     let {r: r, s: s, v: v} = parseSignature(existingSignature.signature)
     let {0: isSigned} = await clientRaindrop.isSigned(userAddress, Eth.keccak256(req.query.message), v, r, s);
 
-    let verification = verificationLogRespository.create({signature: existingSignature.signature, username: req.query.hydro_id, verified: isSigned, application_id: req.query.application_id})
+    // const myBuffer = Buffer.from(req.query.application_id.replace(/-/g, ''), 'hex')
+    // @ts-ignore
+    let verification = verificationLogRespository.create({
+      signature: existingSignature.signature, username: req.query.hydro_id, verified: isSigned, application_id: req.query.application_id, log_id: newUUID()
+    })
     await verificationLogRespository.save(verification)
 
     res.status(200).json(verification)

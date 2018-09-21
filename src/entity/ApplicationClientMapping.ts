@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from 'typeorm';
 
-import { BaseEntity } from './BaseEntity'
+import { BaseEntity, UUIDTransformer } from './BaseEntity'
 
 @Entity("application_client_mapping")
 export class ApplicationClientMapping extends BaseEntity {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryColumn({type: "binary", length: 16, transformer: new UUIDTransformer()})
     application_client_mapping_id!: string;
 
-    @Column()
+    @Column({type: "binary", length: 16, transformer: new UUIDTransformer()})
     application_id!: string;
 
     @Column()
-    hydro_id!: string;
+    username!: string;
 
     @Column()
     application_name!: string;

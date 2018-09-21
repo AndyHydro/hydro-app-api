@@ -1,12 +1,11 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-import { BaseEntity } from './BaseEntity'
+import { BaseEntity, UUIDTransformer } from './BaseEntity'
 
 @Entity()
 export class Signature extends BaseEntity {
-
-    @PrimaryColumn({type: "binary", length: 16})
-    signature_id!: Buffer;
+    @PrimaryColumn({type: "binary", length: 16, transformer: new UUIDTransformer()})
+    signature_id!: string;
 
     @Column()
     signature!: string;
@@ -14,6 +13,6 @@ export class Signature extends BaseEntity {
     @Column()
     username!: string;
 
-    @Column()
+    @Column({type: "binary", length: 16, transformer: new UUIDTransformer()})
     application_id!: string;
 }

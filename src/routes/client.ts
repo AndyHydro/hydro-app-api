@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator/check'
 import { Connection } from 'typeorm'
 
 import { withConnection } from '../utils'
-import { newUuidBuffer } from '../utils/uuidUtils'
+import { newUUID } from '../utils'
 import { Signature } from '../entity/Signature'
 import { ApplicationClientMapping } from '../entity/ApplicationClientMapping'
 
@@ -27,7 +27,7 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
     const applicationClientMappingRepository = connection.manager.getRepository(ApplicationClientMapping)
     const signatureRepository = connection.manager.getRepository(Signature)
 
-    let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
+    let mapping = await applicationClientMappingRepository.findOne({username: req.body.username, application_id: req.body.application_id})
     if (!mapping) return customError(Errors.applicationClientMappingDoesntExist, 400, res)
 
     let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
@@ -37,7 +37,7 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
       await signatureRepository.save(existingSignature)
       return res.json(existingSignature)
     } else {
-      const newSignature = signatureRepository.create({...req.body, signature_id: newUuidBuffer()})
+      const newSignature = signatureRepository.create({...req.body, signature_id: newUUID()})
       await signatureRepository.save(newSignature)
       return res.json(newSignature)
     }
