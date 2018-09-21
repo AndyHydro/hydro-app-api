@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+import { BaseEntity } from './BaseEntity'
 
 @Entity("verification_log")
-export class VerificationLog {
-
+export class VerificationLog extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     log_id!: string;
 
@@ -17,10 +18,4 @@ export class VerificationLog {
 
     @Column()
     verified!: boolean;
-
-    @CreateDateColumn()
-    create_date!: Date;
-
-    @UpdateDateColumn()
-    update_date!: Date;
 }

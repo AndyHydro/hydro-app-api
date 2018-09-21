@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+import { BaseEntity } from './BaseEntity'
 
 @Entity("application_client_mapping")
-export class ApplicationClientMapping {
-
+export class ApplicationClientMapping extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     application_client_mapping_id!: string;
 
@@ -17,10 +18,4 @@ export class ApplicationClientMapping {
 
     @Column()
     confirmed!: boolean;
-
-    @CreateDateColumn()
-    create_date!: Date;
-
-    @UpdateDateColumn()
-    update_date!: Date;
 }

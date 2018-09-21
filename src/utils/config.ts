@@ -17,7 +17,7 @@ async function fetchCloudConfig (environment: Environment) {
     await load({
       endpoint: config.get('config.server.endpoint'),
       name:     config.get('config.server.name'),
-      profiles: `eks${environment}`,
+      profiles: environment,
       auth:     {
         user: config.get('config.server.user'),
         pass: config.get('config.server.pass')
@@ -41,7 +41,6 @@ async function fetchCloudConfig (environment: Environment) {
 // get config
 export async function getConfig (req: Request, variables: string[] | string): Promise<string[] | string> {
   const environment: Environment = getEnvironment(req)
-  console.log(environment)
 
   if (environment !== 'test' && environment !== 'dev') {
     await fetchCloudConfig(environment)

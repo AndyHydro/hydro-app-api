@@ -27,9 +27,7 @@ router.post('/signature', signatureArguments, (req: Request, res: Response, next
     const signatureRepository = connection.manager.getRepository(Signature)
 
     let mapping = await applicationClientMappingRepository.findOne({hydro_id: req.body.username, application_id: req.body.application_id})
-    if (!mapping){
-      return customError(Errors.applicationClientMappingDoesntExist, 400, res)
-    }
+    if (!mapping) return customError(Errors.applicationClientMappingDoesntExist, 400, res)
 
     let existingSignature = await signatureRepository.findOne({username: req.body.username, application_id: req.body.application_id})
 

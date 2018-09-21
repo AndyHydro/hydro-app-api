@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+import { BaseEntity } from './BaseEntity'
 
 @Entity()
-export class Signature {
-
+export class Signature extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     signature_id!: string;
 
@@ -14,10 +15,4 @@ export class Signature {
 
     @Column()
     application_id!: string;
-
-    @CreateDateColumn()
-    create_date!: Date;
-
-    @UpdateDateColumn()
-    update_date!: Date;
 }
